@@ -59,7 +59,6 @@ app.get('/detail', (req, res) => {
         SELECT * FROM t_board
         WHERE iboard = ${req.query.iboard}
     `;
-
     getConn(conn => {
         conn.query(sql, (err, rows, fields) => {
             if(!err) {                
@@ -69,8 +68,24 @@ app.get('/detail', (req, res) => {
             }            
         });
         conn.release();
-    });
+    });   
 });
+
+app.get('/delete', (req, res) => {
+    const sql = `
+        DELETE FROM t_board
+        WHERE iboard = ${req.query.iboard}
+    `;
+    getConn(conn => {
+        conn.query(sql, (err, result, fields) => {
+            if(!err) {                
+                console.log(result);
+                res.redirect('/list');
+            }            
+        });
+        conn.release();
+    }); 
+})
 
 
 app.listen(port, () => {
