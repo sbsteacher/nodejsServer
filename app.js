@@ -26,12 +26,6 @@ app.get('/list', async (req, res) => {
     });
 });
 
-
-
-
-
-
-
 app.get('/write', (req, res) => {
     res.render('write');
 })
@@ -44,19 +38,17 @@ app.post('/write', async (req, res) => {
         VALUES
         ('${data.title}', '${data.ctnts}', '${data.writer}')
     `;
-    let conn, result;
-    try {
-        conn = await pool.getConnection();
-        result = await conn.query(sql);
-        res.redirect('/list');
-    }catch(err) {
-        res.send(err);
-    } finally {
-        if(conn) {
-            conn.end();
-            res.send('');
-        }
-    }   
+    console.log(sql);
+    
+    getConn(conn => {
+        conn.query(sql, (err, rows, fields) => {
+            if(!err) {
+                console.log(rows);
+                res.redirect('/list');
+            }            
+        });
+        conn.release();
+    });
 })
 
 app.get('/', (req, res) => {
