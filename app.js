@@ -7,15 +7,17 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/list', async (req, res) => {
-    getConn(conn => {
-        const sql = `
+    const sql = `
         SELECT 
             iboard, title, writer 
         FROM t_board
         ORDER BY iboard DESC
-        `;
+    `;
+
+    getConn(conn => {
         conn.query(sql, (err, rows, fields) => {
             if(!err) {
                 console.log(rows);
@@ -30,7 +32,7 @@ app.get('/write', (req, res) => {
     res.render('write');
 })
 
-app.post('/write', async (req, res) => {    
+app.post('/write', (req, res) => {    
     const data = req.body;
     const sql = `
         INSERT INTO t_board
@@ -41,9 +43,9 @@ app.post('/write', async (req, res) => {
     console.log(sql);
     
     getConn(conn => {
-        conn.query(sql, (err, rows, fields) => {
+        conn.query(sql, (err, result, fields) => {
             if(!err) {
-                console.log(rows);
+                console.log(result);
                 res.redirect('/list');
             }            
         });
@@ -51,24 +53,25 @@ app.post('/write', async (req, res) => {
     });
 })
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+app.get('/detail', (req, res) => {
+    console.log(req.query);
+    const sql = `
+        SELECT * FROM t_board
+        WHERE iboard = ${req.query.iboard}
+    `;
+
+    getConn(conn => {
+        conn.query(sql, (err, rows, fields) => {
+            if(!err) {                
+                const data = rows[0];
+                console.log(data);
+                res.render('detail', {data});
+            }            
+        });
+        conn.release();
+    });
 });
 
-app.get('/hi', (req, res) => {
-    const result = `
-        <html>
-            <head>
-                <meta charset="UTF-8">
-            </head>
-            <body>
-                <h1>반가워</h1>
-                <div>좋아요</div>
-            </body>
-        </html>
-    `;
-    res.send(result);
-});
 
 app.listen(port, () => {
     console.log(`서버 실행 포트번호 ${port}`);
