@@ -9,7 +9,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use('/static', express.static(__dirname + '/static'));
 
-app.get('/list', async (req, res) => {
+app.get('/list', (req, res) => {   
     const sql = `
         SELECT 
             iboard, title, writer 
@@ -30,10 +30,10 @@ app.get('/list', async (req, res) => {
 
 app.get('/write', (req, res) => {
     res.render('write');
-})
+});
 
 app.post('/write', (req, res) => {    
-    const data = req.body;
+    const data = req.body;    
     const sql = `
         INSERT INTO t_board
         (title, ctnts, writer)
@@ -85,7 +85,25 @@ app.get('/delete', (req, res) => {
         });
         conn.release();
     }); 
-})
+});
+
+app.get('/update', (req, res) => {
+
+    const sql = `
+        SELECT * FROM t_board
+        WHERE iboard = ${req.query.iboard}
+    `;
+    getConn(conn => {
+        conn.query(sql, (err, rows, fields) => {
+            if(!err) {                
+                const data = rows[0];
+                console.log(data);
+                res.render('update', {data});
+            }            
+        });
+        conn.release();
+    });     
+});
 
 
 app.listen(port, () => {
