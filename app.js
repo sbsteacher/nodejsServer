@@ -106,6 +106,27 @@ app.get('/update', (req, res) => {
 });
 
 
+app.post('/update', (req, res) => {
+    const data = req.body;
+    const sql = `
+        UPDATE t_board
+        SET title = '${data.title}'
+        , ctnts = '${data.ctnts}'
+        , writer = '${data.writer}'
+        WHERE iboard = ${data.iboard}
+    `;
+
+    getConn(conn => {
+        conn.query(sql, (err, result, fields) => {
+            if(!err) {
+                console.log(result);
+                res.redirect('/list');
+            }            
+        });
+        conn.release();
+    });
+});
+
 app.listen(port, () => {
     console.log(`서버 실행 포트번호 ${port}`);
 });
