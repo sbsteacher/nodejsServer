@@ -9,12 +9,12 @@
 <body>
     <h1>글수정</h1>
     <form action="update" method="post">
-        <div><input type="text" name="title" placeholder="제목" value="<%= item.title %>"></div>
+        <div><input type="text" name="title" placeholder="제목" value="<%= data.title %>"></div>
         <div>
             내용 :
-            <textarea name="ctnts"><%= item.ctnts %></textarea>
+            <textarea name="ctnts"><%= data.ctnts %></textarea>
         </div>
-        <div><input type="text" name="writer" placeholder="작성자" value="<%= item.writer %>"></div>
+        <div><input type="text" name="writer" placeholder="작성자" value="<%= data.writer %>"></div>
         <div>
             <input type="submit" value="수정">
         </div>
