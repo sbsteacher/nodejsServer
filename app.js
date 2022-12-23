@@ -120,7 +120,7 @@ app.post('/update', (req, res) => {
         conn.query(sql, (err, result, fields) => {
             if(!err) {
                 console.log(result);
-                res.redirect('/list');
+                res.redirect(`/detail?iboard= ${data.iboard}`);
             }            
         });
         conn.release();
